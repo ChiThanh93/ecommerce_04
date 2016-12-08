@@ -5,6 +5,7 @@ class Product < ApplicationRecord
   has_many :rates
   has_many :favorites
   has_many :order_details
+  delegate :name, to: :category, prefix: true
 
   paginates_per 10
   validates :name, presence: true, length: {maximum: 50},
@@ -22,5 +23,15 @@ class Product < ApplicationRecord
     def list_product
       self.order(created_at: :ASC).includes(:category)
     end
+
+    def hot_trend
+      product_ids = "select order_details.product_id
+       from order_details
+       where (julianday('now') - julianday(order_details.created_at))
+       < 5
+       group by order_details.product_id
+       order by sum(order_details.quantity)"
+     Product.where("id IN (#{product_ids})")
+   end
   end
 end
