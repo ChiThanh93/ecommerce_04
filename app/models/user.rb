@@ -16,6 +16,9 @@ class User < ApplicationRecord
     search: "%#{search}%"}
   QUERY_BY_NAME_OR_EMAIL = "name like :search or email like :search"
 
+  scope :email_admin, -> () {
+    self.select(:id, :email).where role: :admin
+  }
   class << self
     def find_all_user
       User.select(:id, :name, :email, :avatar).where(role: :user)

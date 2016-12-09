@@ -5,6 +5,12 @@ class Order < ApplicationRecord
 
   enum status: [:processing, :delivering, :delivered, :cancelled]
 
+  def orders_of_month
+    d = Date.today
+    @orders = Order.where("updated_at between d.at_beginning_of_month to
+      d.at_end_of_month")
+  end
+
   def update_order! session_cart, address, phone
     product_carts = session_cart.map {|id, quantity|
       [Product.find_by(id: id), quantity]}

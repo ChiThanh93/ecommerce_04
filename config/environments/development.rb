@@ -34,12 +34,15 @@ Rails.application.configure do
     address: "smtp.gmail.com",
     domain: "mail.google.com",
     port: 587,
-    user_name: ENV["GMAIL_USERNAME"],
-    password: ENV["GMAIL_PASSWORD"],
+    user_name: "n.c.thanh0801@gmail.com",
+    password: "01687253993",
     authentication: :plain,
     enable_starttls_auto: true
   }
 
+  config.action_mailer.default_options = {
+    from: "n.c.thanh0801@gmail.com"
+  }
   config.action_mailer.perform_caching = false
 
   # Print deprecation notices to the Rails logger.
