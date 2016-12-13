@@ -92,7 +92,7 @@ footer {
 .main{
   background: url(asset-path('books.jpg')) no-repeat fixed center;
   background-size: cover;
-  min-height: 630px;
+  min-height: 550px;
 }
 .jumbotron{
   background: unset;
@@ -101,7 +101,7 @@ footer {
 }
 footer{
   min-height: 50px;
-  background-color: #337ab7;
+  background-color: #f15922;
   color: white;
   bottom: 0px;
   width: 100%
@@ -380,4 +380,31 @@ hr{
   border-bottom: 1px solid  #e5e5e5;
   margin: 9px 0;
   overflow: hidden;
+}
+.table-cart thead{
+  background: #f15922;
+  color: #fff;
+}
+.table-cart th{
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+.table-cart tbody tr {
+  padding: 20px 0 ;
+  border: 1px solid #D9E4E6;
+  &:nth-child(odd) {
+    background-color:  #D9E4E6;
+  }
+  td{
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+}
+.step-2{
+  margin-top: 50px;
+  margin-right: 150px;
+}
+.btn-buy{
+  background:#f15922;
+  color: #fff;
 }
