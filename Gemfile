@@ -17,8 +17,9 @@ gem "config"
 gem "puma", "~> 3.0"
 gem "whenever"
 gem "sidekiq"
+gem "omniauth-facebook"
 gem "sass-rails", "~> 5.0"
-
+gem "social-share-button", "~> 0.8.4"
 gem "uglifier", ">= 1.3.0"
 
 gem "coffee-rails", "~> 4.2"
@@ -43,6 +44,8 @@ gem "paranoia"
 gem "simple_form"
 
 gem "ransack"
+
+gem "ratyrate"
 
 group :development, :test do
   gem "byebug", platform: :mri

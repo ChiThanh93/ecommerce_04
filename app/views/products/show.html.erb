@@ -3,20 +3,24 @@
     <div class="container">
       <div class="col-sm-4">
         <%= image_tag @product.image? ?
-          @product.image.url : Settings.product, class: "img-responsive" %>
+          @product.image.url : Settings.product_img, class: "img-responsive" %>
       </div>
       <div class="col-sm-8">
         <table class="row">
-          <tr >
-            <td class="col-xs-4">
-              <%= t".name" %>
+          <tr class="divider">
+            <td class="col-xs-4 title-bold">
             </td>
             <td class="col-xs-8">
               <h1><%= @product.name %></h1>
             </td>
           </tr>
           <tr>
-            <td class="col-xs-4">
+            <td style="padding: 10px 15px">
+              <%= social_share_button_tag @product.name %>
+            </td>
+           </tr>
+           <tr>
+            <td class="col-xs-4 title-bold">
               <%= t".price" %>
             </td>
             <td class="col-xs-8">
@@ -27,7 +31,7 @@
           </tr>
           <% @specifications.each do |specification| %>
           <tr>
-            <td class="col-xs-4">
+            <td class="col-xs-4 title-bold">
               <%= specification.feature_type %>
             </td>
             <td  class="col-xs-8">
@@ -36,7 +40,7 @@
           </tr>
           <% end %>
           <tr>
-            <td class="col-xs-4">
+            <td class="col-xs-4 title-bold">
               <%= t".description" %>
             </td>
             <td class="col-xs-8">
@@ -46,9 +50,45 @@
         </table>
         <div class="input-group">
           <div class="input-group-btn">
-            <%= link_to t(".add_to_cart"), "/cart/#{@product.id}",
-              method: :post, class: "btn btn-sm btn-primary fa fa-cart-arrow-down" %>
+            <a id="add-cart-<%= @product.id %>" class="btn btn-sm
+              fa fa-cart-arrow-down add-product-cart" data="<%= @product.id %>">
+              <%= t".add_to_cart" %>
+            </a>
           </div>
+        </div>
+        <div>
+          <%= rating_for @product, "quality", imdb_avg: true,
+            disable_after_rate: true, enable_half: true %>
+        </div>
+        <% if user_signed_in? %>
+          <%= raw load_favorite_product @product.id %>
+        <% end %>
+      </div>
+      <div class="clearfix">  </div>
+      <div id="comment" class="col-md-6">
+        <span class="header-comment">
+          <%= t ".write_your_comment" %>
+        </span>
+        <% if user_signed_in? %>
+          <%= form_for [@product, @product.comments.new], remote: true do |f| %>
+            <div class="form-group">
+              <%= f.text_area :content, class: "form-control" %>
+            </div>
+            <div class="form-group col-sm-4 pull-right">
+              <%= f.submit t(".comment"),
+                class: "btn fa fa-comment" %>
+            </div>
+          <% end %>
+        <% else %>
+          <%= t ".you_need" %>
+          <%= link_to t(".login"), new_user_session_path %>
+        <% end %>
+        </div>
+        <div class="list-comment col-md-6">
+          <ul id="comments">
+            <%= render @comments %>
+          </ul>
+          <%= paginate @comments %>
         </div>
       </div>
     </div>

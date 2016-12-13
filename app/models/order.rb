@@ -10,6 +10,14 @@ class Order < ApplicationRecord
       date(updated_at) <'#{end_date}'")
   end
 
+  scope :order_count, -> date_time do
+    where("date(created_at) = '#{date_time}'")
+  end
+
+  scope :sum_order, -> date_time do
+    where("date(created_at) = '#{date_time}'")
+  end
+
   def update_order! session_cart, address, phone
     product_carts = session_cart.map {|id, quantity|
       [Product.find_by(id: id), quantity]}
@@ -32,6 +40,15 @@ class Order < ApplicationRecord
         order_detail.save
       end
       session_cart.clear
+    end
+  end
+
+  def self.to_xls(options = [])
+    CSV.generate(options) do |csv|
+      csv << column_names
+      all.each do |order|
+        csv << order.attributes.values_at(*column_names)
+      end
     end
   end
 

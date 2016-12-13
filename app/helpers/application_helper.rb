@@ -42,4 +42,48 @@ module ApplicationHelper
     pro = Promotion.is_sale_of(product.id, time).first
     pro.nil? ? product.price : (product.price * pro.sale)
   end
+
+  def load_categories_menu
+    @tree = ""
+    tree Category.all
+  end
+
+  def load_favorite_product product_id
+    @favorite_div = ""
+    @favorite_div += "<div class='favorite-product' data='#{product_id}'>"
+    if current_user.favorite_products.exists? id: product_id
+      @favorite_div += "<a id='fav' title='#{t('add_favo')}' class='inactive'></a>"
+    else
+      @favorite_div += "<a id='fav' title='#{t('remove_favo')}' class='active'></a>"
+    end
+    @favorite_div += "</div>"
+    @favorite_div
+  end
+
+  def convert_datetime date
+    date.to_formatted_s(:long)
+  end
+
+  private
+  def tree categories, left = 0, right = nil, depth = -1
+    @tree += "<ul class='dropdown-menu'>" if left == 0 && right == nil &&
+      depth == -1
+    categories.each do |category|
+      if category.lft > left && (right.nil? || category.rgt <
+        right) && category.depth == depth + 1
+        categories_temp = categories.compact
+        categories_temp.delete category
+        @tree += "<li class='dropdown-submenu '>
+          <a href='/categories/#{category.id}'>#{category.name}</a>"
+        if category.rgt != (category.lft + 1)
+          @tree += "<ul class='dropdown-menu' >"
+          tree categories_temp, category.lft, category.rgt, category.depth
+          @tree += "</ul>"
+        end
+        @tree += "</li>"
+      end
+    end
+    @tree += "</ul>" if left == 0 && right.nil? && depth == -1
+    @tree
+  end
 end

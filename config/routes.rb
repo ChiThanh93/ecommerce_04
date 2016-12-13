@@ -1,19 +1,30 @@
 Rails.application.routes.draw do
-  devise_for :users
+  post "/rate", to: "rater#create", as: "rate"
+  devise_for :users,
+    controllers: {omniauth_callbacks: "omniauth_callbacks"}
 
   root "products#index"
 
   namespace :admin do
+    root "charts#index"
     resources :categories
     resources :products
     resources :users
     resources :orders
     resources :suggested_products
+    resources :csv, only: :create
+    resources :charts, :line_chart
   end
 
-  resources :products
-  resources :orders, only: [:new, :create, :show]
+
+  resources :orders
+  resources :products do
+    resources :comments
+  end
+
   resources :suggested_products
+  resources :categories, only: :show
+  resources :favorite_products, only: [:create, :destroy]
 
   get "/cart", to: "cart#index"
   delete "/cart/:id/delete", to: "cart#destroy"

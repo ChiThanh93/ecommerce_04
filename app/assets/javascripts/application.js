@@ -13,11 +13,13 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
+//= require social-share-button
 //= require_tree .
 //= require bootstrap
+//= require jquery.raty
+//= require ratyrate
 
 $(document).on('turbolinks:load', function () {
-
   var data = {};
     $('.cart-quantity').each(function(){
       $(this).bind('keyup change click', function (e) {
@@ -43,4 +45,59 @@ $(document).on('turbolinks:load', function () {
       });
     }
   });
+
+  $('a#fav.inactive').bind('click', addFav);
+  $('a#fav.active').bind('click', removeFav);
+
+  $('.add-product-cart').each(function() {
+    $(this).click(function(){
+      var id = $(this).attr('data');
+      $.ajax({
+        url: '/cart/' + id,
+        data: {
+          product_id: id
+        },
+        method: 'POST',
+        success: function(result){
+          $('.cart-head').text('  (' + result + ')');
+        }
+      });
+    });
+  });
 });
+
+function addFav(){
+  var product_id = $('.favorite-product').attr('data')
+  $.ajax({
+    url: '/favorite_products/',
+    data: {product_id: product_id},
+    method: 'POST',
+    success: function(){
+      $('a#fav')
+        .removeClass('inactive')
+        .addClass('active')
+        .attr('title','[-] Remove from favorites')
+        .unbind('click')
+        .bind('click', removeFav)
+       ;
+    }
+  });
+}
+
+function removeFav(){
+  var product_id = $('.favorite-product').attr('data')
+  $.ajax({
+    url: '/favorite_products/' + product_id,
+    data: {product_id: product_id},
+    method: 'DELETE',
+    success: function(){
+      $('a#fav')
+        .removeClass('active')
+        .addClass('inactive')
+        .attr('title','[+] Add as favorite')
+        .unbind('click')
+        .bind('click', addFav)
+      ;
+    }
+  });
+}

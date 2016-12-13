@@ -7,9 +7,9 @@ class Product < ApplicationRecord
   belongs_to :category
   has_many :specifications, dependent: :destroy, inverse_of: :product
   has_many :comments
-  has_many :rates
-  has_many :favorites
   has_many :order_details
+
+  ratyrate_rateable "quality"
 
   delegate :name, to: :category, prefix: true
 
@@ -41,6 +41,24 @@ class Product < ApplicationRecord
        group by order_details.product_id
        order by sum(order_details.quantity)"
      Product.where("id IN (#{product_ids})")
-   end
+    end
+
+    def import file
+      CSV.foreach(file.path, headers: true, col_sep: "|",
+        header_converters: :symbol) do |row|
+        row = row.to_hash
+        specifications_attributes = []
+        row[:specifications].split(";").each do |spec|
+          spec_hash = Hash.new
+          arr_spec = spec.split(",")
+          spec_hash[:feature_type] = arr_spec[0]
+          spec_hash[:feature_value] = arr_spec[1]
+          specifications_attributes.push spec_hash
+        end
+        row[:specifications_attributes] = specifications_attributes
+        row.delete :specifications
+        Product.create! row
+      end
+    end
   end
 end
